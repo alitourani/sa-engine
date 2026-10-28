@@ -14,7 +14,13 @@ setup(
     maintainer="Ali Tourani",
     python_requires=">=3.12",
     include_package_data=True,
-    packages=find_packages(exclude=["docs"]),
+    packages=find_packages(exclude=["docs"]) + ["sa_engine.config"],
+    package_dir={
+        "sa_engine.config": "config",
+    },
+    package_data={
+        "sa_engine.config": ["*.yaml"],
+    },
     maintainer_email="a.tourani1991@gmail.com",
     url="https://github.com/alitourani/sa-engine",
     description="Sight-Audition-Enabled Engine for Embodied AI & Robotics",
