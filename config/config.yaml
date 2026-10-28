@@ -1,0 +1,76 @@
+# ==============================================================================
+# SA-Engine: Sight & Audition Multimodal Engine for Embodied AI Robotics
+# Master Configuration File
+# ==============================================================================
+
+
+# ------------------------------------------------------------------------------
+# System & Compute Runtime
+# ------------------------------------------------------------------------------
+system:
+  device: "cuda"              # Inference device: "cuda", "cpu"
+  seed: 42                    # Random seed for reproducibility
+
+
+# ------------------------------------------------------------------------------
+# Interface & Communication
+# ------------------------------------------------------------------------------
+interface:
+  mode: "standalone"      # "ros2", "standalone"
+  
+  standalone:
+    application_name: "SA-Engine Standalone"
+    paths:
+      # Inputs
+      input_video_path: "inputs/video.mp4"
+      # Outputs
+      output_pointcloud_path: "outputs/dense_pointcloud.ply"
+  
+  ros2:
+    node_name: "sa_engine_node"
+    # Vision Sensor Configuration
+    camera:
+      frame_id: "camera_optical_frame"
+      fps: 15                   # Target camera frame rate
+    # Audio Sensor Configuration
+    audio:
+      frame_id: "mic_array_link"
+      sample_rate: 16000        # Audio sample rate in Hz
+    # Topics
+    topics:
+      # Inputs
+      input_rgb_image: "/camera/rgb/image_raw"
+      input_camera_info: "/camera/rgb/camera_info"
+      input_audio_raw: "/audio/audio_raw"
+      # Outputs
+      output_pointcloud: "/sa_engine/dense_pointcloud"
+
+
+# ------------------------------------------------------------------------------
+# 3D Vision & Geometry Sub-Engine
+# ------------------------------------------------------------------------------
+vision:
+  # Metric 3D Geometry & Pointcloud Reconstruction via DUSt3R
+  dust3r:
+    model_name: "DUSt3R_ViTLarge_BaseDecoder_512_dpt" # DUSt3R ViT backbone
+    weights_path: "weights/dust3r/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"
+
+  # Pointcloud Filtering, Cleaning & Geometry Processing
+  pointcloud_processing:
+    voxel_downsample_size: 0.02  # Voxel grid filter leaf size in meters
+
+
+# ------------------------------------------------------------------------------
+# High-Level Audio & Spatial Directionality Engine
+# ------------------------------------------------------------------------------
+audio:
+  # Microphone Array Geometry Specifications
+  array_geometry:
+    type: "circular"          # "circular", "linear", "custom"
+
+
+# ------------------------------------------------------------------------------
+# Multimodal Audio-Visual Spatial Fusion
+# ------------------------------------------------------------------------------
+multimodal_fusion:
+  enabled: true
