@@ -18,6 +18,10 @@ system:
 interface:
   standalone:
     application_name: "SA-Engine Standalone"
+    video_loader:
+      fps: 1                         # Target frame rate for frame extraction (Hz)
+      resolution: [640, 480]         # [width, height] target resolution in pixels (null for native)
+      queue_size: 10                 # In-memory frame queue size
     paths:
       # Inputs
       input_video_path: "inputs/video.mp4"

@@ -25,7 +25,9 @@ setup(
     url="https://github.com/alitourani/sa-engine",
     description="Sight-Audition-Enabled Engine for Embodied AI & Robotics",
     install_requires=[
-        "PyYAML==6.0.3",
+        "PyYAML>=6.0.2",
+        "opencv-python>=4.13.0.92",
+        "numpy>=2.5.0",
     ],
     # data_files=[
     #     ("share/ament_index/resource_index/packages", ["resource/" + pkg]),

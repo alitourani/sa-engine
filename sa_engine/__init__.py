@@ -7,3 +7,6 @@ if (_root_dir / "config").is_dir():
     if _root_str not in __path__:
         __path__.append(_root_str)
 
+from .loaders import VideoLoader
+
+__all__ = ["VideoLoader"]

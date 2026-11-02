@@ -218,3 +218,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Media inputs & outputs
+inputs/*
+!inputs/.gitkeep
+outputs/*
+!outputs/.gitkeep
+
