@@ -16,8 +16,6 @@ system:
 # Interface & Communication
 # ------------------------------------------------------------------------------
 interface:
-  mode: "standalone"      # "ros2", "standalone"
-  
   standalone:
     application_name: "SA-Engine Standalone"
     paths:
