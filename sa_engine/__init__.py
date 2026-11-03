@@ -8,5 +8,6 @@ if (_root_dir / "config").is_dir():
         __path__.append(_root_str)
 
 from .loaders import VideoLoader
+from .vision import DepthReconstructor
 
-__all__ = ["VideoLoader"]
+__all__ = ["DepthReconstructor", "VideoLoader"]

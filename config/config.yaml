@@ -52,13 +52,22 @@ interface:
 # 3D Vision & Geometry Sub-Engine
 # ------------------------------------------------------------------------------
 vision:
+  # Monocular Depth Estimation & 3D Reconstruction (HuggingFace Transformers)
+  depth_anything:
+    model_name: "depth-anything/Depth-Anything-V2-Small-hf" # HuggingFace model checkpoint
+    intrinsics:
+      fx: 525.0                                             # Focal length X in pixels
+      fy: 525.0                                             # Focal length Y in pixels
+      cx: 320.0                                             # Principal point X
+      cy: 240.0                                             # Principal point Y
+
   # Metric 3D Geometry & Pointcloud Reconstruction via DUSt3R
   dust3r:
     model_name: "DUSt3R_ViTLarge_BaseDecoder_512_dpt" # DUSt3R ViT backbone
     weights_path: "weights/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"
 
   # Pointcloud Filtering, Cleaning & Geometry Processing
-  pointcloud_processing:
+  pointcloud:
     voxel_downsample_size: 0.02  # Voxel grid filter leaf size in meters
 
 

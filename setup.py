@@ -28,6 +28,9 @@ setup(
         "PyYAML>=6.0.2",
         "opencv-python>=4.13.0.92",
         "numpy>=2.5.0",
+        "torch>=2.13.0",
+        "transformers>=5.10.1",
+        "pillow>=12.3.0",
     ],
     # data_files=[
     #     ("share/ament_index/resource_index/packages", ["resource/" + pkg]),

@@ -9,7 +9,14 @@ Apart from that, the system requires some pre-trained models to be downloaded an
 
 ### I. Download Vision Models
 
-**SA-Engine** uses [Dust3r](https://github.com/naver/dust3r) as the visual interpretation backbone.
+#### I-A. Depth Anything 3
+
+**SA-Engine** uses [Depth Anything 3](https://depth-anything-3.github.io/) as a visual interpretation backbone.
+Since it uses HuggingFace Transformers, the weights can be automatically downloaded and fed to the system.
+
+#### I-B. Dust3r (Under Development)
+
+**SA-Engine** uses [Dust3r](https://github.com/naver/dust3r) as another visual interpretation backbone.
 Download one of the checkpoints and place it in the [`weights`](/weights/) folder.
 The recommended weights for reliable performance is [`DUSt3R_ViTLarge_BaseDecoder_512_dpt`](https://download.europe.naverlabs.com/ComputerVision/DUSt3R/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth).
 
