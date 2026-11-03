@@ -55,7 +55,7 @@ vision:
   # Metric 3D Geometry & Pointcloud Reconstruction via DUSt3R
   dust3r:
     model_name: "DUSt3R_ViTLarge_BaseDecoder_512_dpt" # DUSt3R ViT backbone
-    weights_path: "weights/dust3r/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"
+    weights_path: "weights/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"
 
   # Pointcloud Filtering, Cleaning & Geometry Processing
   pointcloud_processing:

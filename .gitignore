@@ -225,3 +225,6 @@ inputs/*
 outputs/*
 !outputs/.gitkeep
 
+# Checkpoints
+weights/*
+!weights/.gitkeep
