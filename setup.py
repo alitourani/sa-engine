@@ -1,6 +1,4 @@
-import os
-from glob import glob
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 pkg = "sa_engine"
 
@@ -31,6 +29,8 @@ setup(
         "torch>=2.13.0",
         "transformers>=5.10.1",
         "pillow>=12.3.0",
+        "open3d>=0.18.0",
+        "rerun-sdk>=0.20.0",
     ],
     # data_files=[
     #     ("share/ament_index/resource_index/packages", ["resource/" + pkg]),

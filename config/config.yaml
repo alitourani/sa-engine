@@ -85,3 +85,14 @@ audio:
 # ------------------------------------------------------------------------------
 multimodal_fusion:
   enabled: true
+
+
+# ------------------------------------------------------------------------------
+# Debugging & Real-Time Visualization
+# ------------------------------------------------------------------------------
+visualization:
+  enabled: true                 # Real-time streaming visualizer (similar to RViz)
+  backend: "rerun"              # "rerun" (multimodal viewer) or "open3d"
+  app_name: "SA-Engine"         # Visualizer window / recording name
+  voxel_downsample: 0.02        # Voxel downsampling (meters) for accumulated 3D scene
+

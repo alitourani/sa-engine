@@ -9,5 +9,6 @@ if (_root_dir / "config").is_dir():
 
 from .loaders import VideoLoader
 from .vision import DepthReconstructor
+from .visualization import SceneVisualizer
 
-__all__ = ["DepthReconstructor", "VideoLoader"]
+__all__ = ["DepthReconstructor", "SceneVisualizer", "VideoLoader"]

@@ -19,5 +19,6 @@ config.yaml
 │   ├── dust3r              # DUSt3R foundation model weights and configuration
 │   └── pointcloud          # Voxel filtering and downsampling
 ├── audio                   # High-level audio engine (microphone array, AEC, DoA)
-└── multimodal_fusion       # Audio-visual spatial projection
+├── multimodal_fusion       # Audio-visual spatial projection
+└── visualization           # Real-time streaming visualizer (Rerun or Open3D)
 ```

@@ -1,15 +1,18 @@
 """Monocular Depth Estimation and 3D Reconstruction using HuggingFace & OpenCV."""
 
 from pathlib import Path
+from typing import Any
 
 import cv2
 import numpy as np
 from PIL import Image
 
 try:
+    import open3d as o3d
     import torch
     from transformers import pipeline
 except ImportError:
+    o3d = None
     torch = None
     pipeline = None
 
@@ -120,10 +123,19 @@ class DepthReconstructor:
         return {"depth": depth, "points": points, "colors": colors}
 
     @staticmethod
-    def save_ply(output_path: str | Path, points: np.ndarray, colors: np.ndarray):
-        """Save 3D point cloud to an ASCII PLY file."""
+    def save_ply(
+        output_path: str | Path,
+        points: np.ndarray | Any,
+        colors: np.ndarray | None = None,
+    ):
+        """Save 3D point cloud to a PLY file (supports Open3D PointCloud or NumPy arrays)."""
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Fast write if given an Open3D PointCloud
+        if o3d is not None and hasattr(points, "points"):
+            o3d.io.write_point_cloud(str(path), points)
+            return
 
         num_points = len(points)
         header = (
@@ -140,4 +152,110 @@ class DepthReconstructor:
         )
         with open(path, "w", encoding="utf-8") as f:
             f.write(header)
-            f.writelines(f"{x:.4f} {y:.4f} {z:.4f} {int(r)} {int(g)} {int(b)}\n" for (x, y, z), (r, g, b) in zip(points, colors))
+            f.writelines(
+                f"{x:.4f} {y:.4f} {z:.4f} {int(r)} {int(g)} {int(b)}\n"
+                for (x, y, z), (r, g, b) in zip(points, colors)
+            )
+
+    @staticmethod
+    def to_open3d(points: np.ndarray, colors: np.ndarray | None = None):
+        """Convert NumPy 3D points and colors into an Open3D PointCloud."""
+        if o3d is None:
+            raise ImportError(
+                "Open3D is required for 3D visualization. "
+                "Please install it via: pip install open3d"
+            )
+
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(np.asarray(points, dtype=np.float64))
+        if colors is not None and len(colors) == len(points):
+            colors_norm = np.asarray(colors, dtype=np.float64)
+            if colors_norm.size > 0 and colors_norm.max() > 1.0:
+                colors_norm = colors_norm / 255.0
+            pcd.colors = o3d.utility.Vector3dVector(colors_norm)
+        return pcd
+
+    @classmethod
+    def combine_pointclouds(cls, pointclouds, voxel_downsample: float | None = None):
+        """Combine multiple frame point clouds into a single unified Open3D PointCloud."""
+        if o3d is None:
+            raise ImportError(
+                "Open3D is required for point cloud processing. "
+                "Please install it via: pip install open3d"
+            )
+
+        # If already an Open3D PointCloud object
+        if hasattr(pointclouds, "points"):
+            combined = pointclouds
+        else:
+            combined = o3d.geometry.PointCloud()
+            for item in pointclouds:
+                if isinstance(item, dict):
+                    pcd = cls.to_open3d(item["points"], item.get("colors"))
+                elif isinstance(item, (tuple, list)) and len(item) >= 2:
+                    pcd = cls.to_open3d(item[0], item[1])
+                elif hasattr(item, "points"):
+                    pcd = item
+                else:
+                    continue
+                combined += pcd
+
+        if voxel_downsample and voxel_downsample > 0 and len(combined.points) > 0:
+            combined = combined.voxel_down_sample(voxel_size=float(voxel_downsample))
+
+        return combined
+
+    @staticmethod
+    def _has_display() -> bool:
+        """Check if an active graphical display socket (Wayland / X11) is accessible."""
+        import os
+
+        wayland = os.environ.get("WAYLAND_DISPLAY")
+        runtime_dir = os.environ.get("XDG_RUNTIME_DIR", "")
+        if wayland and runtime_dir and Path(runtime_dir, wayland).exists():
+            return True
+
+        x11 = os.environ.get("DISPLAY")
+        if x11:
+            disp_num = x11.lstrip(":").split(".")[0]
+            if Path(f"/tmp/.X11-unix/X{disp_num}").exists():
+                return True
+
+        return False
+
+    @classmethod
+    def show_pointclouds(
+        cls,
+        pointclouds,
+        window_name: str = "SA-Engine Combined 3D Reconstruction",
+        voxel_downsample: float | None = None,
+    ):
+        """Display combined point clouds together in an Open3D interactive viewer."""
+        if o3d is None:
+            raise ImportError(
+                "Open3D is required for 3D visualization. "
+                "Please install it via: pip install open3d"
+            )
+
+        combined = cls.combine_pointclouds(pointclouds, voxel_downsample=voxel_downsample)
+        num_points = len(combined.points)
+        print(f"- Combined point cloud contains {num_points:,} points.")
+
+        # Check if an active display server (Wayland / X11) is available
+        if not cls._has_display():
+            print(
+                "- [INFO] No graphical display detected. Skipping interactive viewer.\n"
+                "  To view the 3D point cloud, open the saved PLY file in MeshLab / CloudCompare,\n"
+                "  or run SA-Engine directly from your desktop terminal."
+            )
+            return
+
+        print(f"- Opening Open3D interactive viewer '{window_name}' ...")
+        print("  Controls: Left-click drag: Rotate | Right-click drag: Pan | Scroll: Zoom | [Q]: Close")
+
+        try:
+            o3d.visualization.draw_geometries(
+                [combined], window_name=window_name, width=1280, height=720
+            )
+        except Exception as e:
+            print(f"- [WARNING] Could not open interactive 3D window: {e}")
